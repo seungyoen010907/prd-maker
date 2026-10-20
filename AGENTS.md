@@ -8,7 +8,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## 프로젝트: PRD 메이커 (NEXT 개발 세션)
+## 프로젝트: 레퍼런스 아카이브 (NEXT 개발 세션, PRD 메이커 팩을 바꾼 버전)
 
 ### 먼저 읽을 것
 - `docs/PRD.md` (무엇을 만드나), `docs/DESIGN.md` (어떻게 보이나), `docs/API.md` (어떻게 동작하나)
