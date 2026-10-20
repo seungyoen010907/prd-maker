@@ -4,22 +4,6 @@ import { useState } from "react";
 import RefCard from "@/components/RefCard";
 import type { Ref } from "@/lib/types";
 
-// Step 1 전용 가짜 결과. Step 2에서 fetch("/api/refs")로 바꾼다.
-function fakeRef(imageUrl: string, sourceUrl: string, memo: string): Ref {
-  const firstLine = memo.split("\n")[0];
-  const title = firstLine.length > 20 ? firstLine.slice(0, 20) + "…" : firstLine;
-  return {
-    image_url: imageUrl,
-    source_url: sourceUrl || null,
-    memo,
-    title,
-    meta: {
-      title,
-      one_liner: "(가짜 요약) Step 2에서 AI가 메모를 한 줄로 줄여 준다.",
-    },
-  };
-}
-
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
@@ -32,7 +16,7 @@ export default function Home() {
   const trimmedUrl = imageUrl.trim();
   const showPreview = /^https?:\/\//.test(trimmedUrl);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
@@ -47,10 +31,27 @@ export default function Home() {
 
     setLoading(true);
     setResult(null);
-    setTimeout(() => {
-      setResult(fakeRef(trimmedUrl, sourceUrl.trim(), memo.trim()));
+    try {
+      const res = await fetch("/api/refs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image_url: trimmedUrl,
+          source_url: sourceUrl.trim(),
+          memo: memo.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "알 수 없는 오류가 났다.");
+        return;
+      }
+      setResult(data as Ref);
+    } catch {
+      setError("서버에 연결하지 못했다. npm run dev가 켜져 있는지 확인해 줘.");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   }
 
   const inputClass =
