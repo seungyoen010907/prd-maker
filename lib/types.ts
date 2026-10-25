@@ -12,3 +12,18 @@ export type Ref = {
   title: string;
   meta: RefMeta;
 };
+
+// refs 테이블에 저장된 row (POST /api/refs 응답)
+export type SavedRef = Ref & {
+  id: string;
+  created_at: string;
+};
+
+// 보드 한 칸 (GET /api/refs의 items)
+export type RefListItem = {
+  id: string;
+  created_at: string;
+  image_url: string;
+  title: string;
+  one_liner: string;
+};

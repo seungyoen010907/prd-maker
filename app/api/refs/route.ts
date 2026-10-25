@@ -1,8 +1,7 @@
 import { generateRefMeta } from "@/lib/openai";
-import type { Ref } from "@/lib/types";
+import { getSupabase } from "@/lib/supabase";
 
 // POST /api/refs (docs/API.md 4번)
-// Step 2: AI로 제목/요약만 붙여서 돌려준다. Supabase 저장은 Step 3에서 붙인다.
 export async function POST(request: Request) {
   let body: unknown;
   try {
@@ -42,15 +41,37 @@ export async function POST(request: Request) {
     );
   }
 
-  // 3. 저장은 Step 3에서
+  // 3. refs 테이블에 저장
+  const { data, error } = await getSupabase()
+    .from("refs")
+    .insert({
+      image_url: image_url.trim(),
+      source_url: source,
+      memo: memo.trim(),
+      title: meta.title,
+      meta,
+    })
+    .select()
+    .single();
+  if (error) {
+    console.error("insert refs failed:", error);
+    return Response.json({ error: `저장하지 못했다: ${error.message}` }, { status: 500 });
+  }
 
   // 4. 응답
-  const ref: Ref = {
-    image_url: image_url.trim(),
-    source_url: source,
-    memo: memo.trim(),
-    title: meta.title,
-    meta,
-  };
-  return Response.json(ref, { status: 201 });
+  return Response.json(data, { status: 201 });
+}
+
+// GET /api/refs: 최신순 100개 (docs/API.md 4번)
+export async function GET() {
+  const { data, error } = await getSupabase()
+    .from("refs")
+    .select("id, created_at, image_url, title, one_liner:meta->>one_liner")
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (error) {
+    console.error("select refs failed:", error);
+    return Response.json({ error: `목록을 불러오지 못했다: ${error.message}` }, { status: 500 });
+  }
+  return Response.json({ items: data });
 }

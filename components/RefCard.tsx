@@ -3,13 +3,13 @@
 import { useState } from "react";
 import type { Ref } from "@/lib/types";
 
-type Props = {
-  item: Ref;
-  // 보드(Step 3)에서는 이미지와 제목만 보여준다
-  compact?: boolean;
-};
+type Props =
+  | { item: Ref; compact?: false }
+  // 보드에서는 이미지와 제목만 보여준다
+  | { item: Pick<Ref, "image_url" | "title">; compact: true };
 
-export default function RefCard({ item, compact = false }: Props) {
+export default function RefCard(props: Props) {
+  const { item } = props;
   const [broken, setBroken] = useState(false);
 
   return (
@@ -29,22 +29,24 @@ export default function RefCard({ item, compact = false }: Props) {
         />
       )}
 
-      <h2 className="mt-3 text-base font-bold">{item.title}</h2>
+      <h2 className={props.compact ? "mt-2 px-1 text-sm font-bold" : "mt-3 text-base font-bold"}>
+        {item.title}
+      </h2>
 
-      {!compact && (
+      {!props.compact && (
         <>
-          <p className="mt-1 text-sm text-muted">{item.meta.one_liner}</p>
+          <p className="mt-1 text-sm text-muted">{props.item.meta.one_liner}</p>
           <p className="mt-4 whitespace-pre-wrap rounded-2xl bg-card p-4 text-sm leading-relaxed">
-            {item.memo}
+            {props.item.memo}
           </p>
-          {item.source_url && (
+          {props.item.source_url && (
             <a
-              href={item.source_url}
+              href={props.item.source_url}
               target="_blank"
               rel="noreferrer"
               className="mt-2 block truncate text-xs text-muted underline"
             >
-              출처: {item.source_url}
+              출처: {props.item.source_url}
             </a>
           )}
         </>
