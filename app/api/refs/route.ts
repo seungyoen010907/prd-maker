@@ -66,7 +66,7 @@ export async function POST(request: Request) {
 export async function GET() {
   const { data, error } = await getSupabase()
     .from("refs")
-    .select("id, created_at, image_url, title, one_liner:meta->>one_liner")
+    .select("id, created_at, image_url, title, one_liner:meta->>one_liner, tags:meta->tags")
     .order("created_at", { ascending: false })
     .limit(100);
   if (error) {

@@ -6,7 +6,8 @@ export const refMetaSchema = {
   properties: {
     title: { type: "string" },
     one_liner: { type: "string" },
+    tags: { type: "array", items: { type: "string" } },
   },
-  required: ["title", "one_liner"],
+  required: ["title", "one_liner", "tags"],
   additionalProperties: false,
 };

@@ -2,6 +2,7 @@
 export type RefMeta = {
   title: string;
   one_liner: string;
+  tags: string[]; // PRD 8-3
 };
 
 // 레퍼런스 하나 (docs/API.md 5번 refs 테이블)
@@ -26,4 +27,5 @@ export type RefListItem = {
   image_url: string;
   title: string;
   one_liner: string;
+  tags: string[] | null; // Step 4 이전에 저장한 row는 null
 };
