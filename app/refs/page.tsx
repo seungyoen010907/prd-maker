@@ -38,9 +38,14 @@ export default function BoardPage() {
         // 메이슨리 격자: CSS columns (DESIGN.md 5번, 8번)
         <div className="columns-2 gap-2 md:columns-3 lg:columns-4">
           {items.map((item) => (
-            <div key={item.id} className="mb-4 break-inside-avoid">
+            // 카드 전체가 상세 링크 (DESIGN.md 5번)
+            <Link
+              key={item.id}
+              href={`/refs/${item.id}`}
+              className="mb-4 block break-inside-avoid"
+            >
               <RefCard item={item} compact />
-            </div>
+            </Link>
           ))}
         </div>
       )}
